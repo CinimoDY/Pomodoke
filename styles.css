@@ -59,6 +59,12 @@ body {
     animation: flicker 0.15s infinite;
 }
 
+@media screen and (max-width: 600px) {
+    .container {
+        padding: 2rem 4px;
+    }
+}
+
 .timer {
     font-size: 4rem;
     font-weight: bold;
