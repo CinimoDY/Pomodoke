@@ -12,17 +12,22 @@ class PomodokeTimer {
         this.timerId = null;
         this.isRunning = false;
         this.currentGoal = '';
-        
+
+        // Initialize elements first
         this.initializeElements();
+        
+        // Then set up event listeners
         this.initializeEventListeners();
+        
+        // Finally update the display
         this.updateDisplay();
-        this.initializeThemeSwitch();
         
         // Initially hide pause button
         this.pauseButton.classList.add('hidden');
     }
 
     initializeElements() {
+        // Get all required elements
         this.minutesDisplay = document.getElementById('minutes');
         this.secondsDisplay = document.getElementById('seconds');
         this.startButton = document.getElementById('start');
@@ -32,26 +37,48 @@ class PomodokeTimer {
         this.longBreakButton = document.getElementById('long-break');
         this.goalInput = document.getElementById('goal-input');
         this.currentGoalDisplay = document.getElementById('current-goal');
+        this.themeToggle = document.getElementById('theme-toggle');
     }
 
     initializeEventListeners() {
+        // Timer controls
         this.startButton.addEventListener('click', () => this.start());
         this.pauseButton.addEventListener('click', () => this.pause());
+        
+        // Mode switches
         this.pomodokeButton.addEventListener('click', () => this.setTimer('pomodoke'));
         this.shortBreakButton.addEventListener('click', () => this.setTimer('shortBreak'));
         this.longBreakButton.addEventListener('click', () => this.setTimer('longBreak'));
+        
+        // Goal input
         this.goalInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 this.setGoal(this.goalInput.value);
                 this.goalInput.value = '';
             }
         });
+        
+        // Theme toggle
+        this.themeToggle.addEventListener('click', () => {
+            const root = document.documentElement;
+            const isAmber = root.getAttribute('data-theme') === 'amber';
+            
+            if (isAmber) {
+                root.removeAttribute('data-theme');
+                this.themeToggle.textContent = 'GREEN';
+            } else {
+                root.setAttribute('data-theme', 'amber');
+                this.themeToggle.textContent = 'AMBER';
+            }
+        });
     }
 
     setGoal(goal) {
-        this.currentGoal = goal;
-        this.currentGoalDisplay.textContent = goal;
-        document.title = `${this.currentGoal} - Pomodoke Timer`;
+        if (goal && goal.trim()) {
+            this.currentGoal = goal.trim();
+            this.currentGoalDisplay.textContent = this.currentGoal;
+            this.updateDisplay();
+        }
     }
 
     updateDisplay() {
@@ -108,7 +135,10 @@ class PomodokeTimer {
 
     pause() {
         this.isRunning = false;
-        clearInterval(this.timerId);
+        if (this.timerId) {
+            clearInterval(this.timerId);
+            this.timerId = null;
+        }
         
         // Update button states
         this.pauseButton.classList.remove('primary');
@@ -192,22 +222,6 @@ class PomodokeTimer {
             setTimeout(() => audio.play(), 500);
             setTimeout(() => audio.play(), 1000);
         }
-    }
-
-    initializeThemeSwitch() {
-        const themeToggle = document.getElementById('theme-toggle');
-        themeToggle.addEventListener('click', () => {
-            const root = document.documentElement;
-            const isAmber = root.getAttribute('data-theme') === 'amber';
-            
-            if (isAmber) {
-                root.removeAttribute('data-theme');
-                themeToggle.textContent = 'GREEN';
-            } else {
-                root.setAttribute('data-theme', 'amber');
-                themeToggle.textContent = 'AMBER';
-            }
-        });
     }
 }
 
