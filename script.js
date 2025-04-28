@@ -1,11 +1,5 @@
 class PomodokeTimer {
     constructor() {
-        this.currentMode = 'pomodoke'; // Set default mode
-        this.timeLeft = this.durations[this.currentMode] * 60; // Initialize with default mode duration
-        this.timerId = null;
-        this.isRunning = false;
-        this.currentGoal = '';
-        
         // Timer durations in minutes
         this.durations = {
             pomodoke: 25,
@@ -13,6 +7,12 @@ class PomodokeTimer {
             longBreak: 15
         };
 
+        this.currentMode = 'pomodoke'; // Set default mode
+        this.timeLeft = this.durations[this.currentMode] * 60; // Initialize with default mode duration
+        this.timerId = null;
+        this.isRunning = false;
+        this.currentGoal = '';
+        
         this.initializeElements();
         this.initializeEventListeners();
         this.updateDisplay();
@@ -55,39 +55,51 @@ class PomodokeTimer {
     }
 
     updateDisplay() {
-        const minutes = Math.floor(this.timeLeft / 60);
-        const seconds = this.timeLeft % 60;
-        const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        
-        // Update display elements
-        this.minutesDisplay.textContent = minutes.toString().padStart(2, '0');
-        this.secondsDisplay.textContent = seconds.toString().padStart(2, '0');
-        
-        // Update browser tab title
-        document.title = this.currentGoal 
-            ? `${this.currentGoal} - ${timeString}`
-            : `${timeString} - Pomodoke Timer`;
+        try {
+            const minutes = Math.floor(this.timeLeft / 60);
+            const seconds = this.timeLeft % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update display elements
+            this.minutesDisplay.textContent = minutes.toString().padStart(2, '0');
+            this.secondsDisplay.textContent = seconds.toString().padStart(2, '0');
+            
+            // Update browser tab title
+            document.title = this.currentGoal 
+                ? `${this.currentGoal} - ${timeString}`
+                : `${timeString} - Pomodoke Timer`;
+        } catch (error) {
+            console.error('Error updating display:', error);
+            // Reset to default state if something goes wrong
+            this.timeLeft = this.durations[this.currentMode] * 60;
+            this.updateDisplay();
+        }
     }
 
     start() {
         if (!this.isRunning) {
-            this.isRunning = true;
-            this.timerId = setInterval(() => {
-                this.timeLeft--;
-                this.updateDisplay();
-                
-                if (this.timeLeft === 0) {
-                    this.playAlarm();
-                    this.reset();
-                }
-            }, 1000);
+            try {
+                this.isRunning = true;
+                this.timerId = setInterval(() => {
+                    if (this.timeLeft > 0) {
+                        this.timeLeft--;
+                        this.updateDisplay();
+                    } else {
+                        this.playAlarm();
+                        this.reset();
+                    }
+                }, 1000);
 
-            // Show pause button and make it primary
-            this.pauseButton.classList.remove('hidden');
-            this.pauseButton.classList.add('primary');
-            // Change start button text to "Reset"
-            this.startButton.classList.remove('primary');
-            this.startButton.textContent = 'Reset';
+                // Show pause button and make it primary
+                this.pauseButton.classList.remove('hidden');
+                this.pauseButton.classList.add('primary');
+                // Change start button text to "Reset"
+                this.startButton.classList.remove('primary');
+                this.startButton.textContent = 'Reset';
+            } catch (error) {
+                console.error('Error starting timer:', error);
+                this.reset();
+            }
         } else {
             // If timer is running, act as reset
             this.reset();
@@ -106,20 +118,31 @@ class PomodokeTimer {
     }
 
     reset() {
-        this.isRunning = false;
-        clearInterval(this.timerId);
-        this.timeLeft = this.durations[this.currentMode] * 60;
-        this.updateDisplay();
-        
-        // Reset button states
-        this.pauseButton.classList.remove('primary');
-        this.pauseButton.classList.add('hidden');
-        this.startButton.classList.add('primary');
-        this.startButton.textContent = 'Start';
-        
-        // Clear goal when resetting
-        this.currentGoal = '';
-        this.currentGoalDisplay.textContent = '';
+        try {
+            this.isRunning = false;
+            if (this.timerId) {
+                clearInterval(this.timerId);
+                this.timerId = null;
+            }
+            this.timeLeft = this.durations[this.currentMode] * 60;
+            this.updateDisplay();
+            
+            // Reset button states
+            this.pauseButton.classList.remove('primary');
+            this.pauseButton.classList.add('hidden');
+            this.startButton.classList.add('primary');
+            this.startButton.textContent = 'Start';
+            
+            // Clear goal when resetting
+            this.currentGoal = '';
+            this.currentGoalDisplay.textContent = '';
+        } catch (error) {
+            console.error('Error resetting timer:', error);
+            // Force reset to default state
+            this.currentMode = 'pomodoke';
+            this.timeLeft = this.durations[this.currentMode] * 60;
+            this.updateDisplay();
+        }
     }
 
     setTimer(mode) {
