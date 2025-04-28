@@ -3,6 +3,7 @@ class PomodokeTimer {
         this.timeLeft = 20 * 60; // 20 minutes in seconds
         this.timerId = null;
         this.isRunning = false;
+        this.currentGoal = '';
         
         // Timer durations in minutes
         this.durations = {
@@ -28,6 +29,8 @@ class PomodokeTimer {
         this.pomodokeButton = document.getElementById('pomodoke');
         this.shortBreakButton = document.getElementById('short-break');
         this.longBreakButton = document.getElementById('long-break');
+        this.goalInput = document.getElementById('goal-input');
+        this.currentGoalDisplay = document.getElementById('current-goal');
     }
 
     initializeEventListeners() {
@@ -36,6 +39,18 @@ class PomodokeTimer {
         this.pomodokeButton.addEventListener('click', () => this.setTimer('pomodoke'));
         this.shortBreakButton.addEventListener('click', () => this.setTimer('shortBreak'));
         this.longBreakButton.addEventListener('click', () => this.setTimer('longBreak'));
+        this.goalInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.setGoal(this.goalInput.value);
+                this.goalInput.value = '';
+            }
+        });
+    }
+
+    setGoal(goal) {
+        this.currentGoal = goal;
+        this.currentGoalDisplay.textContent = goal;
+        document.title = `${this.currentGoal} - Pomodoke Timer`;
     }
 
     updateDisplay() {
@@ -48,7 +63,9 @@ class PomodokeTimer {
         this.secondsDisplay.textContent = seconds.toString().padStart(2, '0');
         
         // Update browser tab title
-        document.title = `${timeString} - Pomodoke Timer`;
+        document.title = this.currentGoal 
+            ? `${this.currentGoal} - ${timeString}`
+            : `${timeString} - Pomodoke Timer`;
     }
 
     start() {
@@ -98,6 +115,10 @@ class PomodokeTimer {
         this.pauseButton.classList.add('hidden');
         this.startButton.classList.add('primary');
         this.startButton.textContent = 'Start';
+        
+        // Clear goal when resetting
+        this.currentGoal = '';
+        this.currentGoalDisplay.textContent = '';
     }
 
     setTimer(mode) {

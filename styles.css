@@ -144,4 +144,27 @@ body {
 
 .controls button.hidden {
     display: none;
+}
+
+.goal-container {
+    margin: 1rem 0;
+    text-align: center;
+}
+
+#goal-input {
+    padding: 0.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 80%;
+    max-width: 400px;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.current-goal {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    min-height: 1.5rem;
 } 
