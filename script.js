@@ -1,6 +1,7 @@
 class PomodokeTimer {
     constructor() {
-        this.timeLeft = 20 * 60; // 20 minutes in seconds
+        this.currentMode = 'pomodoke'; // Set default mode
+        this.timeLeft = this.durations[this.currentMode] * 60; // Initialize with default mode duration
         this.timerId = null;
         this.isRunning = false;
         this.currentGoal = '';

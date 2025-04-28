@@ -153,18 +153,29 @@ body {
 
 #goal-input {
     padding: 0.5rem;
-    border: 2px solid var(--border-color);
-    border-radius: 4px;
+    border: 2px solid var(--primary);
+    border-radius: 0;
     font-size: 1rem;
     width: 80%;
     max-width: 400px;
-    background: var(--bg-color);
-    color: var(--text-color);
+    background: #080808;
+    color: var(--primary);
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+#goal-input:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--primary-glow);
 }
 
 .current-goal {
     margin-top: 0.5rem;
     font-size: 1.2rem;
-    color: var(--text-color);
+    color: var(--primary);
     min-height: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 } 
